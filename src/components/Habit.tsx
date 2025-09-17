@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Habit as HabitType } from "../context/HabitContext";
+import type { Habit as HabitType } from "../context/HabitContext";
 
 interface HabitProps {
   habit: HabitType;
