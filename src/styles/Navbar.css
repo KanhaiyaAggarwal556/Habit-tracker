@@ -1,0 +1,43 @@
+.navbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    background-color: #c0baba42;
+    border-bottom: 1px solid #072532;
+    
+}
+
+.logo{
+    pointer-events: none;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 1.3rem;
+    color: #3b82f6;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.search-bar{
+    height: 30px;
+    width: 300px;
+    border-radius: 5px;
+    border-left: 1px solid #072532;
+    padding: 5px;
+    font-size: 1rem;
+    outline: none;
+    margin-right: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: black;
+}
+.search-button{
+    height: 30px;
+    width: 80px;
+    border-radius: 5px;
+    border: none;
+    background-color: #3b82f6;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 20px;
+
+}

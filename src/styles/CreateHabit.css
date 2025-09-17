@@ -1,0 +1,157 @@
+.create-habit-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.create-logo {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.create-habit {
+  background-color: #3b82f6;
+  color: white;
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.create-habit:hover {
+  background-color: #2563eb;
+}
+
+/* Dropdown form container */
+.form-dropdown {
+  animation: slideDown 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 400px;
+    opacity: 1;
+  }
+}
+.form-container {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  margin-top: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.habit-form {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.habit-label {
+  font-weight: 600;
+  color: #243741;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.habit-input {
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  outline: none;
+}
+
+.habit-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(36, 55, 65, 0.1);
+}
+
+.habit-select {
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  outline: none;
+}
+
+.habit-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(36, 55, 65, 0.1);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.submit-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex: 1;
+}
+
+.submit-button:hover {
+  background-color: #2563eb;
+}
+
+/* Close button */
+.close-button {
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.close-button:hover {
+  background-color: #5a6268;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .create-habit-container {
+    margin: 0 15px;
+  }
+  
+  .habit-form {
+    padding: 20px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+}
