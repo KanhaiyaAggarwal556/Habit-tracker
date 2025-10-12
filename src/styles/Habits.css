@@ -1,259 +1,223 @@
-/* Container */
-.habits-container {
-  max-width: 640px;
+/* Global styles */
+body {
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #212529;
+}
+
+/* Grid container for 3-column layout */
+.habits-container-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  max-width: 1400px;
   margin: 24px auto;
   padding: 16px;
-  font-family: system-ui, -apple-system, sans-serif;
-  color: #1a1a1a;
 }
 
-/* Empty state */
 .no-habits {
+  grid-column: 1 / -1;
   text-align: center;
-  color: #777;
-  font-size: 15px;
-  margin: 48px 0;
-  font-style: italic;
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin: 64px 0;
 }
 
-/* Habit card */
-.habit-card {
-  background: #fff;
-  border: 1px solid #eee;
+/* Compact Habit Card */
+.habit-card-compact {
+  background: #ffffff;
+  border: 1px solid #dee2e6;
   border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
-  transition: box-shadow 0.2s ease, transform 0.1s ease;
-}
-
-.habit-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transform: translateY(-1px);
-}
-
-/* Header */
-.habit-header {
+  padding: 12px 16px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.habit-card-compact.completed-today {
+  background-color: #f1f3f5;
+  opacity: 0.8;
+}
+
+.habit-card-compact.completed-today .habit-name {
+  text-decoration: line-through;
+  color: #868e96;
+}
+
+/* Header for Compact View */
+.habit-header-compact {
+  display: flex;
   align-items: center;
-  margin-bottom: 12px;
-}
-
-.habit-header h3 {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 600;
-  color: #222;
-}
-
-.streak-info {
-  display: flex;
   gap: 12px;
+  width: 100%;
 }
 
-.streak-info span {
-  background: #f3f4f6;
-  padding: 3px 8px;
+.habit-checkbox {
+  width: 20px;
+  height: 20px;
+  accent-color: #0d6efd;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.habit-name {
+  font-weight: 500;
+  font-size: 16px;
+  color: #212529;
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.habit-name-input {
+  flex-grow: 1;
+  font-size: 16px;
+  padding: 4px 6px;
+  border: 1px solid #0d6efd;
   border-radius: 6px;
-  font-size: 13px;
-  color: #444;
+  outline: none;
 }
 
-/* Body sections */
-.habit-body {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* Tracking type */
-.tracking-section {
+/* Actions: Expand and Options */
+.habit-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.tracking-section label {
-  font-weight: 500;
-}
-
-.tracking-section select {
-  padding: 5px 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* Weekly progress */
-.weekly-progress {
-  display: flex;
-  flex-direction: column;
   gap: 4px;
-  font-size: 13px;
-  color: #555;
+  margin-left: auto;
 }
 
-.progress-bar {
+.expand-btn, .options-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #6c757d;
+  transition: background-color 0.2s;
+}
+.expand-btn:hover, .options-btn:hover {
+  background-color: #e9ecef;
+}
+.options-btn {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Options Menu */
+.options-menu {
+  position: relative;
+}
+.options-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid #f1f3f5;
+  width: 140px;
+  z-index: 10;
+  overflow: hidden;
+  padding: 4px 0;
+}
+.options-dropdown button {
+  display: block;
   width: 100%;
-  height: 8px;
-  background: #f1f3f5;
-  border-radius: 6px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+.options-dropdown button:hover {
+  background-color: #f8f9fa;
+}
+
+/* Compact Weekly Progress Bar */
+.weekly-progress-bar-compact {
+  height: 4px;
+  background-color: #e9ecef;
+  border-radius: 2px;
+  margin-top: 8px;
   overflow: hidden;
 }
-
-.progress-fill {
+.weekly-progress-bar-compact div {
   height: 100%;
-  background: #3b82f6;
+  background-color: #0d6efd;
+  border-radius: 2px;
   transition: width 0.3s ease;
 }
 
-/* Completion */
-.completion-section {
-  padding: 12px;
-  background: #fafafa;
-  border-radius: 8px;
+/* Expanded Body */
+.habit-body-expanded {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e9ecef;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-/* Checkbox today */
-.today-section {
+.stats-section, .weekly-target-editor {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  font-size: 14px;
+  color: #495057;
 }
-
-.today-section input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #3b82f6;
-}
-
-/* Custom date */
-.previous-days-section button {
-  font-size: 13px;
-  padding: 6px 12px;
+.weekly-target-editor input {
+  width: 60px;
+  padding: 4px 8px;
+  border: 1px solid #ced4da;
   border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  text-align: center;
 }
 
-.custom-date-btn {
-  background: #3b82f6;
-  color: white;
-}
-
-.custom-date-btn:hover {
-  background: #2563eb;
-}
-
-.date-picker-section {
-  background: #f9fafb;
-  padding: 12px;
-  border-radius: 8px;
-  margin-top: 8px;
-  border: 1px solid #eee;
-}
-
-.date-input-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.date-input-row input[type="date"] {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 5px 8px;
-  font-size: 13px;
-}
-
-.date-action-btn {
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.date-action-btn.add { background: #16a34a; color: white; }
-.date-action-btn.add:hover { background: #15803d; }
-
-.date-action-btn.remove { background: #dc2626; color: white; }
-.date-action-btn.remove:hover { background: #b91c1c; }
-
-.date-action-btn.cancel { background: #9ca3af; color: white; }
-.date-action-btn.cancel:hover { background: #6b7280; }
-
-.date-status-info {
-  font-size: 12px;
-  color: #555;
-  margin-top: 6px;
-}
-
-/* History */
-.completion-history {
-  border-top: 1px solid #eee;
-  padding-top: 12px;
-}
-
-.completion-history h4 {
-  font-size: 13px;
-  font-weight: 600;
-  margin: 0 0 8px;
-  color: #333;
-}
-
-.history-grid {
-  display: flex;
-  flex-wrap: wrap;
+/* Compact History Grid */
+.history-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 4px;
 }
-
 .history-day {
-  width: 22px;
-  height: 22px;
+  aspect-ratio: 1 / 1;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: help;
   transition: transform 0.15s ease;
 }
+.history-day.completed { background: #0d6efd; color: white; }
+.history-day.not-completed { background: #e9ecef; color: #6c757d; }
+.history-day.today { outline: 2px solid #0d6efd; outline-offset: 1px; }
 
-.history-day.completed {
-  background: #3b82f6;
-  color: white;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .habits-container-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
 }
-
-.history-day.not-completed {
-  background: #f3f4f6;
-  color: #777;
-}
-
-.history-day.today {
-  outline: 2px solid #3b82f6;
-}
-
-.history-day:hover {
-  transform: scale(1.08);
-}
-
-.history-legend {
-  font-size: 11px;
-  color: #666;
-  margin-top: 6px;
-}
-
-/* Mobile tweaks */
-@media (max-width: 480px) {
-  .habit-card { padding: 16px; }
-  .habit-header { flex-direction: column; align-items: flex-start; gap: 6px; }
-  .streak-info { align-self: flex-end; }
-  .date-input-row { flex-direction: column; gap: 6px; }
+.history-day {
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  transition: transform 0.15s ease;
+  cursor: pointer; /* ✨ ADD THIS LINE */
 }

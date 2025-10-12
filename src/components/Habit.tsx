@@ -4,13 +4,11 @@ import type { Habit as HabitType } from "../context/HabitContext";
 interface HabitProps {
   habit: HabitType;
   toggleHabit: (habitId: string, date?: string) => void;
-  updateTracking: (habitId: string, tracking: "daily" | "weekly") => void;
+  deleteHabit: (habitId: string) => void;
+  editHabitName: (habitId: string, newName: string) => void;
+  updateWeeklyTarget: (habitId: string, newTarget: number) => void;
   isDoneToday: (habitId: string) => boolean;
-  isDoneOnDate: (habitId: string, date: string) => boolean;
-  getHistory: (
-    habitId: string,
-    days?: number
-  ) => Array<{
+  getHistory: (habitId: string, days?: number) => Array<{
     dateString: string;
     isCompleted: boolean;
     dayNumber: number;
@@ -21,189 +19,133 @@ interface HabitProps {
 export default function Habit({
   habit,
   toggleHabit,
-  updateTracking,
+  deleteHabit,
+  editHabitName,
+  updateWeeklyTarget,
   isDoneToday,
-  isDoneOnDate,
   getHistory,
 }: HabitProps) {
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState(habit.habitName);
+  const [showOptions, setShowOptions] = useState(false);
 
-  const getWeeklyProgress = (habit: HabitType) => {
-    if (habit.trackingType !== "weekly") return { completed: 0, target: 0 };
+  const completedToday = isDoneToday(habit.habitId);
+  const completionHistory = getHistory(habit.habitId, 7);
 
-    const today = new Date();
-    const weekStart = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - today.getDay()
-    );
-    const weekDates: string[] = [];
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(weekStart);
-      date.setDate(weekStart.getDate() + i);
-      weekDates.push(date.toISOString().split("T")[0]);
+  const handleNameSave = () => {
+    if (newName.trim() && newName.trim() !== habit.habitName) {
+      editHabitName(habit.habitId, newName.trim());
     }
+    setIsEditing(false);
+    setShowOptions(false);
+  };
 
-    const completed = weekDates.filter((date) =>
-      habit.datesCompleted.includes(date)
-    ).length;
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete "${habit.habitName}"?`)) {
+      deleteHabit(habit.habitId);
+    }
+  };
+
+  const getWeeklyProgress = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1; // Monday as 0
+    const weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
+    const weekDates: string[] = [];
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + i);
+        weekDates.push(date.toISOString().split("T")[0]);
+    }
+    const completed = habit.datesCompleted.filter(date => weekDates.includes(date)).length;
     return { completed, target: habit.targetWeekly };
   };
 
-  const handleDateSelection = () => {
-    if (selectedDate) {
-      toggleHabit(habit.habitId, selectedDate);
-      setSelectedDate("");
-      setShowDatePicker(false);
-    }
-  };
-
-  const completionHistory = getHistory(habit.habitId, 14);
-  const completedToday = isDoneToday(habit.habitId);
-  const weeklyProgress = getWeeklyProgress(habit);
+  const weeklyProgress = habit.trackingType === 'weekly' ? getWeeklyProgress() : null;
 
   return (
-    <div className="habit-card">
-      <div className="habit-header">
-        <h3>{habit.habitName}</h3>
-        <div className="streak-info">
-          <span>Current: {habit.streakCurrent}</span>
-          <span>Best: {habit.streakMaximum}</span>
-        </div>
-      </div>
-
-      <div className="habit-body">
-        <div className="tracking-section">
-          <label>Tracking:</label>
-          <select
-            value={habit.trackingType}
-            onChange={(e) =>
-              updateTracking(habit.habitId, e.target.value as "daily" | "weekly")
-            }
-          >
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-          </select>
-          {habit.trackingType === "weekly" && (
-            <span className="weekly-target">
-              ({habit.targetWeekly} days/week)
-            </span>
-          )}
-        </div>
-
-        {habit.trackingType === "weekly" && (
-          <div className="weekly-progress">
-            <span>
-              {weeklyProgress.completed}/{weeklyProgress.target} days this week
-            </span>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{
-                  width: `${Math.min(
-                    (weeklyProgress.completed / weeklyProgress.target) * 100,
-                    100
-                  )}%`,
-                }}
-              ></div>
-            </div>
-          </div>
+    <div className={`habit-card-compact ${completedToday ? "completed-today" : ""} ${isExpanded ? "expanded" : ""}`}>
+      <div className="habit-header-compact">
+        <input
+          type="checkbox"
+          checked={completedToday}
+          onChange={() => toggleHabit(habit.habitId)}
+          className="habit-checkbox"
+        />
+        {isEditing ? (
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onBlur={handleNameSave}
+            onKeyDown={(e) => e.key === 'Enter' && handleNameSave()}
+            className="habit-name-input"
+            autoFocus
+          />
+        ) : (
+          <span className="habit-name" onClick={() => setIsExpanded(!isExpanded)}>{habit.habitName}</span>
         )}
 
-        <div className="completion-section">
-          <div className="today-section">
-            <input
-              type="checkbox"
-              id={`today-${habit.habitId}`}
-              checked={completedToday}
-              onChange={() => toggleHabit(habit.habitId)}
-            />
-            <label htmlFor={`today-${habit.habitId}`}>
-              {completedToday
-                ? "Done for today"
-                : "Mark as completed for today"}
-            </label>
-          </div>
-
-          <div className="previous-days-section">
-            <button
-              className="custom-date-btn"
-              onClick={() => setShowDatePicker(!showDatePicker)}
-            >
-              {showDatePicker ? "Hide" : "Select"} Custom Date
-            </button>
-
-            {showDatePicker && (
-              <div className="date-picker-section">
-                <label>Select any date to toggle completion:</label>
-                <div className="date-input-row">
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    max={new Date().toISOString().split("T")[0]}
-                  />
-                  <button
-                    onClick={handleDateSelection}
-                    disabled={!selectedDate}
-                    className={`date-action-btn ${
-                      selectedDate &&
-                      isDoneOnDate(habit.habitId, selectedDate)
-                        ? "remove"
-                        : "add"
-                    }`}
-                  >
-                    {selectedDate &&
-                    isDoneOnDate(habit.habitId, selectedDate)
-                      ? "Remove"
-                      : "Add"}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowDatePicker(false);
-                      setSelectedDate("");
-                    }}
-                    className="date-action-btn cancel"
-                  >
-                    Cancel
-                  </button>
-                </div>
-                {selectedDate && (
-                  <div className="date-status-info">
-                    {isDoneOnDate(habit.habitId, selectedDate)
-                      ? 'This date is already completed. Click "Remove" to unmark it.'
-                      : 'This date is not completed. Click "Add" to mark it as done.'}
-                  </div>
-                )}
+        <div className="habit-actions">
+          <button onClick={() => setIsExpanded(!isExpanded)} className="expand-btn">
+             {isExpanded ? '▲' : '▼'}
+          </button>
+          <div className="options-menu">
+            <button onClick={() => setShowOptions(!showOptions)} className="options-btn">⋮</button>
+            {showOptions && (
+              <div className="options-dropdown">
+                <button onClick={() => { setIsEditing(true); setIsExpanded(true); setShowOptions(false); }}>Edit Name</button>
+                <button onClick={handleDelete}>Delete Habit</button>
               </div>
             )}
           </div>
         </div>
+      </div>
+      
+      {habit.trackingType === 'weekly' && !isExpanded && (
+        <div className="weekly-progress-bar-compact">
+          <div style={{ width: `${Math.min((weeklyProgress.completed / weeklyProgress.target) * 100, 100)}%` }}></div>
+        </div>
+      )}
 
-        <div className="completion-history">
-          <h4>Recent Activity:</h4>
-          <div className="history-grid">
-            {completionHistory.map(
-              ({ dateString, isCompleted, dayNumber, isToday }) => (
-                <div
-                  key={dateString}
-                  className={`history-day ${
-                    isCompleted ? "completed" : "not-completed"
-                  } ${isToday ? "today" : ""}`}
-                  title={new Date(dateString).toLocaleDateString()}
-                >
-                  {dayNumber}
-                </div>
-              )
-            )}
+      {isExpanded && (
+        <div className="habit-body-expanded">
+          <div className="stats-section">
+            <span>Current Streak: <strong>{habit.streakCurrent}</strong></span>
+            <span>Best Streak: <strong>{habit.streakMaximum}</strong></span>
           </div>
-          <div className="history-legend">
-            Last 14 days (today has blue border)
+          
+          {habit.trackingType === "weekly" && weeklyProgress && (
+            <div className="weekly-target-editor">
+              <label>Target ({weeklyProgress.completed}/{weeklyProgress.target} this week):</label>
+              <input
+                type="number"
+                min="1"
+                max="7"
+                value={habit.targetWeekly}
+                onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    if(val > 0 && val < 8) updateWeeklyTarget(habit.habitId, val)
+                }}
+              />
+            </div>
+          )}
+
+          <div className="history-grid-compact">
+            {completionHistory.map(({ dateString, isCompleted, isToday }) => (
+              <div
+                key={dateString}
+                className={`history-day ${isCompleted ? "completed" : "not-completed"} ${isToday ? "today" : ""}`}
+                title={`Click to toggle for: ${new Date(dateString).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`}
+                // ✨ THIS IS THE ADDED FUNCTIONALITY
+                onClick={() => toggleHabit(habit.habitId, dateString)}
+              >
+                {new Date(dateString).toLocaleDateString(undefined, { weekday: 'short' })[0]}
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
